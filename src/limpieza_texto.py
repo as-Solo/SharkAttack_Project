@@ -1,43 +1,65 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 
 def year_sure(palabra):
-    # quiero garantizar que todas mis entradas terminen con el año además, esta función me garantiza que
-    #limpiar fecha no borre por error ningún dato. A lo mejor debería juntarlas ambas
+    """
+    Delete all the character at the end of the string until it founds a digit
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+    
     palabra = str(palabra)
     palabra = palabra.strip()
-    palabra.replace('.', '')
     respuesta = str(palabra)
     
     while len(respuesta) > 0:
-        
+        #print (respuesta)
         if respuesta[-1].isnumeric():
             return respuesta
         else:
-            #print (respuesta)
             respuesta = respuesta[:-1]
-            
-    #return palabra
 
 
 
 def limpiar_fecha (palabra):
-    # primero creo todo lo que voy a necesitar
+    """
+    Delete all character previous the last 'space' character
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+    
     palabra = str(palabra)
     fecha_limpia = str()
     
     palabra = palabra.strip()
+    
     for letra in reversed(palabra):
+        
         if letra != ' ':
             fecha_limpia += letra
+            #print(fecha_limpia)
+            
         else:
+            #print (fecha_limpia)
             return fecha_limpia[::-1]
     
     return palabra
 
-        
+
 def meses_to_num(palabra):
+    """
+    Turn the name of the months to digit and replace '-' for '/'
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
     
     palabra = str(palabra)
     meses_dict = {'Jan' : '01', 'Feb' : '02', 'Mar' : '03', 'Apr' : '04', 'May' : '05', 'Jun' : '06', 'Jul' : '07',
@@ -53,31 +75,14 @@ def meses_to_num(palabra):
 
 
 
-def especies_tiburon(palabra):
-    
-    palabra = str(palabra)
-    palabra = palabra.strip()
-    respuesta = palabra.lower()
-    especies_dict = {'white' :'White Shark', 'hammerhead': 'Hammerhead Shark', 'tiger' : 'Tiger Shark', 'nurse' : 'Grey Nurse Shark', 'invalid' : 'Uknowm', 'copper' : 'Cooper Shark', 'cooper' : 'Cooper Shark', 'lemon' : 'Lemon Shark', 'sand' : 'Sand Shark', 'bull' : 'Bull Shark', 'zambezi' : 'Zambezi Shark', 'tawney' : 'Tawney Shark', 'blue' : 'Blue Pointer', 'bronze' : 'Bronze Whaler Shark', 'mako' : 'Mako Shark', 'wobbegong' : 'Wobbegong Shark', 'blacktip' : 'Blatip Shark', 'spinner' : 'Spinner Shark', 'brown' : 'Brown Shark', 'basking' : 'Basking Shark', 'goblin' : 'Goblin Shark'}
-
-    for key, value in especies_dict.items():
-        if key in respuesta:
-            respuesta = value
-            return respuesta
-    
-    return ' Regular Shark'
-
-
-def renombrar_columnas(df):
-    lista_columnas = list(df.columns)
-    columns_newname = [element.strip() for element in lista_columnas]
-    columns_newname = [element.replace(' ', '_')   for element in columns_newname]
-    return columns_newname
-
-
-
-
 def dayweek_clean(fecha):
+    """
+    Evaluate de day of the week in a date
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
 
     try:
         lista = fecha.split(sep = '/')
@@ -91,84 +96,88 @@ def dayweek_clean(fecha):
         return None
 
 
-def columna_year_clean(palabra):
-
-    try:
-        palabra = str(palabra)
-        palabra = palabra.strip()
-        return palabra[-4:]
     
-    except:
+def quitar_suciedad(palabra):
+    """
+    Remove '/' characters at the beggining and the end in a string
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+    palabra = palabra.strip('/')
+    return palabra
+
+
+def columna_year(palabra):
+    """
+    Return the last four digits for the value taken if this value have 4 or more characters
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+    if len(palabra) >= 4:
+        return palabra[-4:]
+
+
+def clean_year(palabra):
+    """
+    Remove all the data celds if the value is not in range 1000-2021 and remove all the '.' characters
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+    palabra = str(palabra)
+    palabra = palabra.replace('.', '')
+    if palabra < '1000' or palabra > '2021':
+        return None
+    else:
         return palabra
 
+
+def clean_year_suciedad(palabra):
+    """
+    Remove all the data celds if the length of the value is less than 4
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+
+    try:
+        if len(palabra) < 4:
+            return None
+        else:
+            return palabra
+    except:
+        pass
+
+
 def decade(palabra):
+    """
+    Return the argument taken changing the last character for a '0'
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
     try:
         return palabra[:-1] + '0'
     except:
         return palabra
 
 
-def repetitions(palabra):
-    
-    try:
-        if '//' in palabra:
-            palabra = palabra.replace('//', '/')
-        return palabra
-    
-    except:
-        return palabra
-
-
-
-def quitar_letras(palabra):
-    
-    if palabra == None:
-        return None
-
-    respuesta = str()
-
-    palabra = str(palabra)    
-    palabra = palabra.strip()
-
-    for c in palabra:
-        if c.isnumeric() or c == '/':
-            respuesta += c
-    
-    if '//' in respuesta:
-        respuesta = respuesta.replace('//', '/')
-
-    return respuesta
-
-def impurezas(palabra):
-    palabra = palabra.replace('/', '')
-    return palabra
-
-
-def limpiar_type(palabra):
-    if palabra == 'Boat' or palabra == 'Boatomg':
-        palabra = 'Boating'
-        return palabra
-    
-    return palabra
-
-
-def limpiar_decades(palabra):
-    
-    try:
-        if palabra < '1000' or palabra > '2021':
-            return None
-        else:
-            return palabra
-    except:
-        return None
-
-
-def limpiar_decade(palabra):
-    control = int(palabra)
-    if control > 1000 and control < 2021:
-        return str(palabra)
 
 def limpiar_fatal(palabra):
+    """
+    Return Y, N, or UNKNOWN depends of the argument taken if argument doesn't match return None
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
     palabra = str(palabra)
     palabra = palabra.strip()
     comp = palabra.lower()
@@ -183,40 +192,40 @@ def limpiar_fatal(palabra):
 
 
 
-###################################################################################################################################################################################
-def standar_year(palabra):
-    
-    aux = str()
-    if palabra.isnumeric():
-        pass
-    else:
-        for character in palabra:
-            if character.isnumeric:
-                aux += character
-        palabra = aux
-    
-    
-        
-    if len(palabra) == 4:
-            return palabra
 
-    elif len(palabra) == 3:
-        
-        conteo = int(palabra)
-        if conteo > 202:
-            palabra = '1' + palabra
-            return palabra
-        else:
-            palabra = palabra + '0'
-            return palabra
-
-    elif len(palabra) == 2:
-        palabra = '19' + palabra
+def limpiar_type(palabra):
+    """
+    Turns to Boating any argument calling boat or boatomg
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+    if palabra == 'Boat' or palabra == 'Boatomg':
+        palabra = 'Boating'
         return palabra
     
-    elif len(palabra) == 1:
-        palabra = '200' + palabra
-        return palabra
+    return palabra
 
-    else:
-        return None
+
+
+def especies_tiburon(palabra):
+    """
+    Looks for coincidents in the argument and return a formated Name
+    Args:
+        object dataframe value
+    Returns:
+        String
+    """
+    
+    palabra = str(palabra)
+    palabra = palabra.strip()
+    respuesta = palabra.lower()
+    especies_dict = {'white' :'White Shark', 'hammerhead': 'Hammerhead Shark', 'tiger' : 'Tiger Shark', 'nurse' : 'Grey Nurse Shark', 'invalid' : 'Uknowm', 'copper' : 'Cooper Shark', 'cooper' : 'Cooper Shark', 'lemon' : 'Lemon Shark', 'sand' : 'Sand Shark', 'bull' : 'Bull Shark', 'zambezi' : 'Zambezi Shark', 'tawney' : 'Tawney Shark', 'blue' : 'Blue Pointer', 'bronze' : 'Bronze Whaler Shark', 'mako' : 'Mako Shark', 'wobbegong' : 'Wobbegong Shark', 'blacktip' : 'Blatip Shark', 'spinner' : 'Spinner Shark', 'brown' : 'Brown Shark', 'basking' : 'Basking Shark', 'goblin' : 'Goblin Shark'}
+
+    for key, value in especies_dict.items():
+        if key in respuesta:
+            respuesta = value
+            return respuesta
+    
+    return ' Regular Shark'
